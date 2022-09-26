@@ -5,9 +5,11 @@ namespace ToDoList.Controllers
 {
   public class HomeController : Controller
   {
-    [Route("/")]
-    public ActionResult Hello() { return View(); }
-
+    [HttpGet("/")]
+    public ActionResult Index() 
+    { 
+      return View(); 
+    }
 
   }
 }
