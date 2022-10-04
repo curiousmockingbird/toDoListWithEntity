@@ -1,31 +1,62 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ToDoList.Controllers
 {
   public class ItemsController : Controller
   {
+    private readonly ToDoListContext _db;
 
-    [HttpGet("/items")]
-    public ActionResult Index()
+    public ItemsController(ToDoListContext db)
     {
-      List<Item> allItems = Item.GetAll();
-      return View(allItems);
+      _db = db;
     }
 
-    [HttpGet("/items/new")]
-    public ActionResult Form()
+    public ActionResult Index()
+    {
+      List<Item> model = _db.Items.ToList();
+      return View(model);
+    }
+    public ActionResult Create()
     {
       return View();
     }
 
-    [HttpPost("/items")]
-    public ActionResult Create(string description, int id)
+    [HttpPost]
+    public ActionResult Create(Item item)
     {
-      Item myItem = new Item(description, 1);
-      return RedirectToAction("Index");
+        _db.Items.Add(item);
+        _db.SaveChanges();
+        return RedirectToAction("Index");
     }
+
+    public ActionResult Details(int id)
+    {
+      Item thisItem = _db.Items.FirstOrDefault(item => item.ItemId == id);
+      return View(thisItem);
+    }
+
+    // [HttpGet("/items")]
+    // public ActionResult Index()
+    // {
+    //   List<Item> allItems = Item.GetAll();
+    //   return View(allItems);
+    // }
+
+    // [HttpGet("/items/new")]
+    // public ActionResult Form()
+    // {
+    //   return View();
+    // }
+
+    // [HttpPost("/items")]
+    // public ActionResult Create(string description, int id)
+    // {
+    //   Item myItem = new Item(description, 1);
+    //   return RedirectToAction("Index");
+    // }
 
   }
 }
